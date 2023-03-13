@@ -6,11 +6,14 @@
 use crate::invoke::*;
 
 mod invoke;
-
+mod models;
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            get_music_detail,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
