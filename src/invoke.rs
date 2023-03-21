@@ -1,4 +1,27 @@
-use crate::models::{music::*, music_url::MusicUrlJson};
+use crate::models::music::MusicJSON;
+use crate::models::music_url::MusicUrlJson;
+use crate::models::service::ServiceState;
+use crate::*;
+
+#[tauri::command]
+pub async fn chekc_server() -> Result<ServiceState, String> {
+    let url = "http://localhost:3000";
+    let resp = reqwest::get(url)
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+    let mut ss = ServiceState {
+        code: 0,
+        msg: "Service is not ok!".into(),
+    };
+    if resp.len() != 0 {
+        ss.code = 200;
+        ss.msg = "Service is ok!".into();
+    }
+    Ok(ss)
+}
 
 #[tauri::command]
 pub fn greet(name: &str) -> String {
@@ -57,5 +80,11 @@ mod tests {
             "This music id is {}'s music url is: {:?}",
             id, music_url_json
         );
+    }
+
+    #[test]
+    fn test_chekc_server() {
+        let s = aw!(chekc_server());
+        println!("{:?}", s);
     }
 }
