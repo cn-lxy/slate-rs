@@ -16,7 +16,7 @@ tauri-build = { version = "1.2", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.2", features = ["reqwest-client", "shell-open", "system-tray"] }
+tauri = { version = "1.2", features = ["dialog-all", "reqwest-client", "shell-open", "system-tray"] }
 rodio = "0.17.0" # X
 #tokio = { version = "1", features = ["full"] } # X
 reqwest = { version = "0.11", features = ["json"] }
