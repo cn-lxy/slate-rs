@@ -6,3 +6,4 @@ pub mod service;
 pub mod check_res;
 pub mod login;
 pub mod register;
+pub mod playlist_detail;

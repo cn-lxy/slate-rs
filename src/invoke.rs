@@ -4,6 +4,7 @@ use crate::models::check_res::CheckRes;
 use crate::models::login::{LoginReq, LoginRes};
 use crate::models::music::MusicJSON;
 use crate::models::music_url::MusicUrlJson;
+use crate::models::playlist_detail::PlaylistDetail;
 use crate::models::register::{RegisterReq, RegisterRes};
 use crate::models::service::ServiceState;
 use crate::*;
@@ -143,11 +144,33 @@ pub async fn register(req_data: RegisterReq) -> Result<RegisterRes, ()> {
     Ok(res)
 }
 
-/// Get the music list
+/// Get plaaylist detail
+#[tauri::command]
+#[allow(dead_code)]
+pub async fn get_playlist_detail(id: u64) -> Result<PlaylistDetail, String> {
+    let url = format!("http://localhost:3000/playlist/detail?id={}", id);
+    let resp = reqwest::get(url)
+        .await
+        .unwrap()
+        .json::<PlaylistDetail>()
+        .await
+        .unwrap();
+    println!("{:?}", resp);
+    Ok(resp)
+}
+
+/// Get the hot music list
 #[allow(dead_code)]
 #[tauri::command]
-pub async fn get_music_list() -> Result<Vec<String>, String> {
-    todo!("get music list")
+pub async fn get_hot_music_list(id: u64, limit: u8, offset: u8) -> Result<MusicJSON, String> {
+    let url = format!("http://localhost:3000/playlist/track/all?id={}&limit={}&offset={}", id, limit, offset);
+    let resp = reqwest::get(url)
+        .await
+        .unwrap()
+        .json::<MusicJSON>()
+        .await
+        .unwrap();
+    Ok(resp)
 }
 
 #[cfg(test)]
@@ -201,5 +224,21 @@ mod tests {
         };
         let res = aw!(register(req_data)).unwrap();
         println!("{:?}", serde_json::to_string(&res).unwrap());
+    }
+
+    #[test]
+    fn test_get_playlist_detail() {
+        let id: u64 = 19723756;
+        let res = aw!(get_playlist_detail(id));
+        println!("{:?}", res);
+    }
+
+    #[test]
+    fn test_get_hot_music_list() {
+        let id: u64 = 19723756;
+        let limit: u8 = 10;
+        let offset: u8 = 0;
+        let res = aw!(get_hot_music_list(id, limit, offset));
+        println!("{:?}", res);
     }
 }
