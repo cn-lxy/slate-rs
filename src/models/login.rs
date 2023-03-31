@@ -21,6 +21,7 @@ pub struct Data {
     pub token: String,
 }
 
+#[allow(unused_imports)]
 mod tests {
     use crate::models::login::{LoginRes, Data};
 

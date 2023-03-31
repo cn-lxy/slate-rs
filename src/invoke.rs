@@ -75,16 +75,11 @@ pub async fn check(token: String) -> Result<CheckRes, String> {
         .send()
         .await
         .unwrap()
-        .json::<CheckRes>()
-        .await;
-    match res {
-        Ok(r) => Ok(r),
-        Err(e) => Ok(CheckRes {
-            code: 401,
-            msg: e.to_string(),
-            data: None,
-        }),
-    }
+        .text()
+        .await
+        .unwrap();
+    let res: CheckRes = serde_json::from_str(res.as_str()).unwrap();
+    Ok(res)
 }
 
 // login
@@ -203,6 +198,13 @@ mod tests {
     fn test_chekc_server() {
         let s = aw!(check_server());
         println!("{:?}", s);
+    }
+
+    #[test]
+    fn test_check() {
+        let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODA0ODgwODQsImlkIjoxLCJuaWNrbmFtZSI6IkRhdmUifQ.avANxkZDZQmi8YhWUyIerPixPAgiYI4YvzP7njDOfkA";
+        let res = aw!(check(token.into())).unwrap();
+        println!("{:?}", serde_json::to_string(&res).unwrap());
     }
 
     #[test]
