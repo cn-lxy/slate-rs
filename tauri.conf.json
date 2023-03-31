@@ -21,6 +21,9 @@
         "all": true,
         "open": true,
         "save": true
+      },
+      "notification": {
+        "all": true
       }
     },
     "bundle": {
@@ -72,7 +75,9 @@
         "height": 600,
         "resizable": true,
         "title": "music_app",
-        "width": 1000
+        "width": 1000,
+        "minWidth": 1000,
+        "minHeight": 600
       }
     ]
   }

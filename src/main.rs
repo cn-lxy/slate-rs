@@ -46,6 +46,8 @@ fn main() {
             check,
             login,
             register,
+            get_hot_music_list,
+            get_playlist_detail,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

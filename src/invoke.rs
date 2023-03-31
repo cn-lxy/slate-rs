@@ -78,6 +78,7 @@ pub async fn check(token: String) -> Result<CheckRes, String> {
         .text()
         .await
         .unwrap();
+    println!("{:?}", res);
     let res: CheckRes = serde_json::from_str(res.as_str()).unwrap();
     Ok(res)
 }
