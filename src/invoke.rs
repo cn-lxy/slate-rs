@@ -6,6 +6,7 @@ use crate::models::music::MusicJSON;
 use crate::models::music_url::MusicUrlJson;
 use crate::models::playlist_detail::PlaylistDetail;
 use crate::models::register::{RegisterReq, RegisterRes};
+use crate::models::search::{SearchResSong, SearchResAlbum, SearchResType, SearchResArtist};
 use crate::models::service::ServiceState;
 use crate::*;
 
@@ -78,7 +79,6 @@ pub async fn check(token: String) -> Result<CheckRes, String> {
         .text()
         .await
         .unwrap();
-    println!("{:?}", res);
     let res: CheckRes = serde_json::from_str(res.as_str()).unwrap();
     Ok(res)
 }
@@ -117,7 +117,6 @@ pub async fn login(req_data: LoginReq, t: String) -> Result<LoginRes, ()> {
         .text()
         .await
         .unwrap();
-    println!("res: {}", res);
     let res = serde_json::from_str::<LoginRes>(&res).unwrap();
     Ok(res)
 }
@@ -135,14 +134,12 @@ pub async fn register(req_data: RegisterReq) -> Result<RegisterRes, ()> {
         .text()
         .await
         .unwrap();
-    println!("res: {}", res);
     let res = serde_json::from_str::<RegisterRes>(&res).unwrap();
     Ok(res)
 }
 
 /// Get plaaylist detail
 #[tauri::command]
-#[allow(dead_code)]
 pub async fn get_playlist_detail(id: u64) -> Result<PlaylistDetail, String> {
     let url = format!("http://localhost:3000/playlist/detail?id={}", id);
     let resp = reqwest::get(url)
@@ -151,12 +148,10 @@ pub async fn get_playlist_detail(id: u64) -> Result<PlaylistDetail, String> {
         .json::<PlaylistDetail>()
         .await
         .unwrap();
-    println!("{:?}", resp);
     Ok(resp)
 }
 
 /// Get the hot music list
-#[allow(dead_code)]
 #[tauri::command]
 pub async fn get_hot_music_list(id: u64, limit: u8, offset: u8) -> Result<MusicJSON, String> {
     let url = format!("http://localhost:3000/playlist/track/all?id={}&limit={}&offset={}", id, limit, offset);
@@ -167,6 +162,38 @@ pub async fn get_hot_music_list(id: u64, limit: u8, offset: u8) -> Result<MusicJ
         .await
         .unwrap();
     Ok(resp)
+}
+
+
+/// Search invoke
+#[allow(dead_code)]
+#[tauri::command]
+pub async fn search(tp: u64, keyword: String, limit: u64, offset: u64) -> Result<SearchResType, String> {
+    let url = format!("http://localhost:3000/cloudsearch?type={}&keywords={}&limit={}&offset={}", tp, keyword, limit, offset);
+    let body = reqwest::get(url)
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+
+    match tp {
+        1 => {
+            let res = serde_json::from_str::<SearchResSong>(&body).unwrap();
+            return Ok(SearchResType::Song(res));
+        },
+        10 => {
+            let res = serde_json::from_str::<SearchResAlbum>(&body).unwrap();
+            return Ok(SearchResType::Album(res));
+        },
+        100 => {
+            let res = serde_json::from_str::<SearchResArtist>(&body).unwrap();
+            return Ok(SearchResType::Artist(res));
+        },
+        _ => {
+            return Err("unknown type".into());
+        }
+    }
 }
 
 #[cfg(test)]
@@ -242,6 +269,36 @@ mod tests {
         let limit: u8 = 10;
         let offset: u8 = 0;
         let res = aw!(get_hot_music_list(id, limit, offset));
+        println!("{:?}", res);
+    }
+
+    #[test]
+    fn test_search_type_song() {
+        let tp: u64 = 1;
+        let keyword = "周杰伦".into();
+        let limit: u64 = 10;
+        let offset: u64 = 0;
+        let res = aw!(search(tp, keyword, limit, offset));
+        println!("{:?}", res);
+    }
+
+    #[test]
+    fn test_search_type_album() {
+        let tp: u64 = 10;
+        let keyword = "周杰伦".into();
+        let limit: u64 = 10;
+        let offset: u64 = 0;
+        let res = aw!(search(tp, keyword, limit, offset));
+        println!("{:?}", res);
+    }
+
+    #[test]
+    fn test_search_type_artist() {
+        let tp: u64 = 100;
+        let keyword = "周杰伦".into();
+        let limit: u64 = 10;
+        let offset: u64 = 0;
+        let res = aw!(search(tp, keyword, limit, offset)).unwrap();
         println!("{:?}", res);
     }
 }
