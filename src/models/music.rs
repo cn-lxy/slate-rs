@@ -29,7 +29,7 @@ pub struct Music {
     /// 0: 未知
     /// 1: 原曲
     /// 2: 翻唱
-    pub originCoverType: u8,
+    pub originCoverType: Option<u8>,
     /// 专辑
     pub al: Album,
 }

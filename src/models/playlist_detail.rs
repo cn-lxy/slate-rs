@@ -11,6 +11,7 @@ pub struct Playlist {
     pub description: String,
     pub tracks: Vec<Music>,
     pub playCount: u64,
+    pub trackCount: u64,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

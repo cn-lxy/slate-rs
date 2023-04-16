@@ -49,6 +49,7 @@ fn main() {
             get_hot_music_list,
             get_playlist_detail,
             search,
+            get_album_detail,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
