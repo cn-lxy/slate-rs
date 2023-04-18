@@ -33,3 +33,11 @@ pub struct InnerArtist {
     pub albumSize: u64,
 }
 
+/// 歌手所有歌曲
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct ArtistAllSongs {
+    pub code: u64,
+    pub more: bool,
+    pub total: u64,
+    pub songs: Vec<Music>,
+}

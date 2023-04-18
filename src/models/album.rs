@@ -9,7 +9,7 @@ use super::{artist::Artist, music::Music};
 pub struct Album {
     pub id: u64,
     pub name: String,
-    pub picUrl : String,
+    pub picUrl : Option<String>,
 }
 
 /// AlbumDetail 专辑详情
