@@ -52,6 +52,7 @@ fn main() {
             get_album_detail,
             get_artist_common_detail,
             get_artist_all_songs,
+            get_artist_all_albums,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

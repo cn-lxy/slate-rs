@@ -41,3 +41,22 @@ pub struct ArtistAllSongs {
     pub total: u64,
     pub songs: Vec<Music>,
 }
+
+/// 歌手所有专辑
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[allow(non_snake_case)]
+pub struct ArtistAllAlbums {
+    pub code: u64,
+    pub more: bool,
+    pub hotAlbums: Vec<InnerAlbum>,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[allow(non_snake_case)]
+pub struct InnerAlbum {
+    pub id: u64,
+    pub name: String,
+    pub publishTime: u64,
+    pub picUrl: String,
+    pub size: u64,
+}

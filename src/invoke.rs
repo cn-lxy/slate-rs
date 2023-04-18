@@ -1,7 +1,7 @@
 use reqwest::header;
 
 use crate::models::album::AlbumDetail;
-use crate::models::artist::{ArtistCommonInfo, ArtistAllSongs};
+use crate::models::artist::{ArtistCommonInfo, ArtistAllSongs, ArtistAllAlbums};
 use crate::models::check_res::CheckRes;
 use crate::models::login::{LoginReq, LoginRes};
 use crate::models::music::MusicJSON;
@@ -251,6 +251,21 @@ pub async fn get_artist_all_songs(id: u64, limit: u64, offset: u64) -> Result<Ar
     Ok(resp)
 }
 
+#[tauri::command]
+pub async fn get_artist_all_albums(id: u64, limit: u64, offset: u64) -> Result<ArtistAllAlbums, String> {
+    let url = format!(
+        "http://localhost:3000/artist/album?id={}&limit={}&offset={}",
+        id, limit, offset
+    );
+    let resp = reqwest::get(url)
+        .await
+        .unwrap()
+        .json::<ArtistAllAlbums>()
+        .await
+        .unwrap();
+    Ok(resp)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -387,6 +402,15 @@ mod tests {
         let limit: u64 = 10;
         let offset: u64 = 0;
         let res = aw!(get_artist_all_songs(id, limit, offset));
+        println!("{:?}", res);
+    }
+
+    #[test]
+    fn test_get_artist_all_albums() {
+        let id: u64 = 12138269;
+        let limit: u64 = 10;
+        let offset: u64 = 0;
+        let res = aw!(get_artist_all_albums(id, limit, offset));
         println!("{:?}", res);
     }
 }
