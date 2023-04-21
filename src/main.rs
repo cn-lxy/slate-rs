@@ -3,7 +3,10 @@
     windows_subsystem = "windows"
 )]
 
+extern crate dotenv;
+
 use crate::invoke::*;
+use std::env;
 use tauri::Manager;
 
 mod invoke;
@@ -13,6 +16,11 @@ mod tray;
 #[derive(Clone, serde::Serialize)]
 struct Payload {
     message: String,
+}
+
+pub struct Store {
+    pub netease_server: String,
+    pub api_server: String,
 }
 
 fn main() {
@@ -33,20 +41,18 @@ fn main() {
                 },
             )
             .unwrap();
-
             Ok(())
         })
         .system_tray(tray::menu())
         .on_system_tray_event(tray::handler)
         .invoke_handler(tauri::generate_handler![
-            greet,
             get_music_detail,
             get_music_url,
             check_server,
             check,
             login,
             register,
-            get_hot_music_list,
+            get_playlist_all_music,
             get_playlist_detail,
             search,
             get_album_detail,
