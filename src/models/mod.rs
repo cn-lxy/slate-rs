@@ -8,3 +8,4 @@ pub mod login;
 pub mod register;
 pub mod playlist_detail;
 pub mod search;
+pub mod api;

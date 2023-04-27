@@ -21,6 +21,7 @@ rodio = "0.17.0" # X
 #tokio = { version = "1", features = ["full"] } # X
 reqwest = { version = "0.11", features = ["json"] }
 tokio-test = "0.4.2"
+dotenv = "0.15.0"
 
 [features]
 # by default Tauri runs in production mode

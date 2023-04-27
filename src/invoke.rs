@@ -1,6 +1,10 @@
 use reqwest::header;
+use serde_json::json;
 
 use crate::models::album::AlbumDetail;
+use crate::models::api::all_songs::AllSongsJSON;
+use crate::models::api::playlist_headers::PlaylistHeadersJSON;
+use crate::models::api::update_playlist::UpdatePlaylistJSON;
 use crate::models::artist::{ArtistAllAlbums, ArtistAllSongs, ArtistCommonInfo};
 use crate::models::check_res::CheckRes;
 use crate::models::login::{LoginReq, LoginRes};
@@ -269,6 +273,136 @@ pub async fn get_artist_all_albums(
     Ok(resp)
 }
 
+#[tauri::command]
+pub async fn get_all_playlist_header(token: String) -> Result<PlaylistHeadersJSON, String> {
+    let url = format!("{}/playlist", API_SERVER);
+    let mut headers = header::HeaderMap::new();
+    let mut auth_value = header::HeaderValue::from_bytes(token.as_bytes()).unwrap();
+    auth_value.set_sensitive(true);
+    headers.insert(header::AUTHORIZATION, auth_value);
+
+    let client = reqwest::Client::builder()
+        .default_headers(headers)
+        .build()
+        .unwrap();
+    let res = client.get(url).send().await.unwrap().text().await.unwrap();
+
+    println!("{:?}", res);
+    match serde_json::from_str::<PlaylistHeadersJSON>(&res) {
+        Ok(json) => Ok(json),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+pub async fn create_playlist(token: String, name: String) -> Result<UpdatePlaylistJSON, String> {
+    let url = format!("{}/playlist/", API_SERVER);
+    let mut headers = header::HeaderMap::new();
+    let mut auth_value = header::HeaderValue::from_bytes(token.as_bytes()).unwrap();
+    auth_value.set_sensitive(true);
+    headers.insert(header::AUTHORIZATION, auth_value);
+
+    let client = reqwest::Client::builder()
+        .default_headers(headers)
+        .build()
+        .unwrap();
+    let res = client
+        .post(url)
+        .json(&json!({ "name": name }))
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+
+    match serde_json::from_str::<UpdatePlaylistJSON>(&res) {
+        Ok(r) => Ok(r),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+pub async fn delete_playlist(token: String, id: u64) -> Result<UpdatePlaylistJSON, String> {
+    let url = format!("{}/playlist/{}", API_SERVER, id);
+    let mut headers = header::HeaderMap::new();
+    let mut auth_value = header::HeaderValue::from_bytes(token.as_bytes()).unwrap();
+    auth_value.set_sensitive(true);
+    headers.insert(header::AUTHORIZATION, auth_value);
+
+    let client = reqwest::Client::builder()
+        .default_headers(headers)
+        .build()
+        .unwrap();
+    let res = client
+        .delete(url)
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+
+    match serde_json::from_str::<UpdatePlaylistJSON>(&res) {
+        Ok(r) => Ok(r),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+pub async fn add_song_to_playlist(token: String, pid: u64, sid: u64) -> Result<UpdatePlaylistJSON, String> {
+    let url = format!("{}/playlist/{}", API_SERVER, pid);
+    let mut headers = header::HeaderMap::new();
+    let mut auth_value = header::HeaderValue::from_bytes(token.as_bytes()).unwrap();
+    auth_value.set_sensitive(true);
+    headers.insert(header::AUTHORIZATION, auth_value);
+
+    let client = reqwest::Client::builder()
+        .default_headers(headers)
+        .build()
+        .unwrap();
+    let res = client
+        .put(url)
+        .json(&json!({"songId": sid}))
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+
+    match serde_json::from_str::<UpdatePlaylistJSON>(&res) {
+        Ok(r) => Ok(r),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+pub async fn get_allsong_playlist(token: String, id: u64) -> Result<AllSongsJSON, String> {
+    let url = format!("{}/playlist/{}", API_SERVER, id);
+    let mut headers = header::HeaderMap::new();
+    let mut auth_value = header::HeaderValue::from_bytes(token.as_bytes()).unwrap();
+    auth_value.set_sensitive(true);
+    headers.insert(header::AUTHORIZATION, auth_value);
+
+    let client = reqwest::Client::builder()
+        .default_headers(headers)
+        .build()
+        .unwrap();
+    let res = client
+        .get(url)
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+    match serde_json::from_str::<AllSongsJSON>(&res) {
+        Ok(r) => Ok(r),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -414,6 +548,46 @@ mod tests {
         let limit: u64 = 10;
         let offset: u64 = 0;
         let res = aw!(get_artist_all_albums(id, limit, offset));
+        println!("{:?}", res);
+    }
+
+    #[test]
+    fn test_get_all_playlist_header() {
+        let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI4Mzc4OTQsImlkIjoyLCJuaWNrbmFtZSI6Ikpob24ifQ.4Y2vNcpptiWnH5XqNodAlizzmq06D0Mxcx71r2pSg3Q";
+        let res = aw!(get_all_playlist_header(token.into()));
+        println!("{:?}", res);
+    }
+
+    #[test]
+    fn test_create_playlist() {
+        let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI4Mzc4OTQsImlkIjoyLCJuaWNrbmFtZSI6Ikpob24ifQ.4Y2vNcpptiWnH5XqNodAlizzmq06D0Mxcx71r2pSg3Q";
+        let name = "test-playlist";
+        let res = aw!(create_playlist(token.into(), name.into()));
+        println!("{:?}", res);
+    }
+
+    #[test]
+    fn test_delete_playlist() {
+        let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI4Mzc4OTQsImlkIjoyLCJuaWNrbmFtZSI6Ikpob24ifQ.4Y2vNcpptiWnH5XqNodAlizzmq06D0Mxcx71r2pSg3Q";
+        let id = 16;
+        let res = aw!(delete_playlist(token.into(), id));
+        println!("{:?}", res);
+    }
+
+    #[test]
+    fn test_add_song_to_playlist() {
+        let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI4Mzc4OTQsImlkIjoyLCJuaWNrbmFtZSI6Ikpob24ifQ.4Y2vNcpptiWnH5XqNodAlizzmq06D0Mxcx71r2pSg3Q";
+        let pid = 14;
+        let sid = 347230;
+        let res = aw!(add_song_to_playlist(token.into(), pid, sid));
+        println!("{:?}", res);
+    }
+
+    #[test]
+    fn test_get_allsong_playlist() {
+        let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI4Mzc4OTQsImlkIjoyLCJuaWNrbmFtZSI6Ikpob24ifQ.4Y2vNcpptiWnH5XqNodAlizzmq06D0Mxcx71r2pSg3Q";
+        let id = 14;
+        let res = aw!(get_allsong_playlist(token.into(), id));
         println!("{:?}", res);
     }
 }
