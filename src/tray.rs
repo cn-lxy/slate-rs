@@ -15,8 +15,8 @@ pub fn menu() -> SystemTray {
         .add_item(previous)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(next);
-    let system_tray = SystemTray::new().with_menu(tray_menu);
-    system_tray
+    
+    SystemTray::new().with_menu(tray_menu)
 }
 
 pub fn handler(app: &AppHandle, event: SystemTrayEvent) {

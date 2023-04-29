@@ -29,7 +29,7 @@ pub async fn check_server() -> Result<ServiceState, String> {
         code: 0,
         msg: "Service is not ok!".into(),
     };
-    if resp.len() != 0 {
+    if !resp.is_empty() {
         ss.code = 200;
         ss.msg = "Service is ok!".into();
     }
@@ -39,26 +39,26 @@ pub async fn check_server() -> Result<ServiceState, String> {
 #[tauri::command]
 pub async fn get_music_detail(id: u64) -> MusicJSON {
     let url = format!("{}/song/detail?ids={}", NETEASE_SERVER, id);
-    let resp = reqwest::get(url)
+    
+    reqwest::get(url)
         .await
         .unwrap()
         .json::<MusicJSON>()
         .await
-        .unwrap();
-    resp.clone()
+        .unwrap()
 }
 
 #[tauri::command]
 pub async fn get_music_url(id: u64) -> MusicUrlJson {
     let level = "standard"; // 默认音乐质量等级为标准
     let url = format!("{}/song/url/v1?id={}&level={}", NETEASE_SERVER, id, level);
-    let resp = reqwest::get(url)
+    
+    reqwest::get(url)
         .await
         .unwrap()
         .json::<MusicUrlJson>()
         .await
-        .unwrap();
-    resp
+        .unwrap()
 }
 
 #[tauri::command]
@@ -190,22 +190,22 @@ pub async fn search(
     match tp {
         1 => {
             let res = serde_json::from_str::<SearchResSong>(&body).unwrap();
-            return Ok(SearchResType::Song(res));
+            Ok(SearchResType::Song(res))
         }
         10 => {
             let res = serde_json::from_str::<SearchResAlbum>(&body).unwrap();
-            return Ok(SearchResType::Album(res));
+            Ok(SearchResType::Album(res))
         }
         100 => {
             let res = serde_json::from_str::<SearchResArtist>(&body).unwrap();
-            return Ok(SearchResType::Artist(res));
+            Ok(SearchResType::Artist(res))
         }
         1000 => {
             let res = serde_json::from_str::<SearchResPlaylist>(&body).unwrap();
-            return Ok(SearchResType::Playlist(res));
+            Ok(SearchResType::Playlist(res))
         }
         _ => {
-            return Err("unknown type".into());
+            Err("unknown type".into())
         }
     }
 }
