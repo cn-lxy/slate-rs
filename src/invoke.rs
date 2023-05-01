@@ -122,6 +122,7 @@ pub async fn login(req_data: LoginReq, t: String) -> Result<LoginRes, ()> {
         .text()
         .await
         .unwrap();
+    println!("{}", res);
     let res = serde_json::from_str::<LoginRes>(&res).unwrap();
     Ok(res)
 }

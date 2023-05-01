@@ -43,6 +43,14 @@ fn main() {
             .unwrap();
             Ok(())
         })
+        .on_window_event(|event| match event.event() {
+            tauri::WindowEvent::CloseRequested { api, .. } => {
+                println!("window CloseRequested");
+                event.window().hide().unwrap();
+                api.prevent_close();
+            }
+            _ => {}
+        })
         .system_tray(tray::menu())
         .on_system_tray_event(tray::handler)
         .invoke_handler(tauri::generate_handler![
