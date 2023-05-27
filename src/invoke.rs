@@ -409,12 +409,6 @@ pub async fn get_allsong_playlist(token: String, id: u64) -> Result<AllSongsJSON
 mod tests {
     use super::*;
 
-    macro_rules! aw {
-        ($e:expr) => {
-            tokio_test::block_on($e)
-        };
-    }
-
     #[tokio::test]
     async fn test_get_music_detail() {
         let m = get_music_detail(1974443814).await;
