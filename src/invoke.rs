@@ -415,181 +415,181 @@ mod tests {
         };
     }
 
-    #[test]
-    fn test_get_music_detail() {
-        let m = aw!(get_music_detail(1974443814));
+    #[tokio::test]
+    async fn test_get_music_detail() {
+        let m = get_music_detail(1974443814).await;
         println!("{:?}", m);
     }
 
-    #[test]
-    fn test_get_music_url() {
+    #[tokio::test]
+    async fn test_get_music_url() {
         let id = 1974443814;
-        let music_url_json = aw!(get_music_url(id));
+        let music_url_json = get_music_url(id).await;
         println!(
             "This music id is {}'s music url is: {:?}",
             id, music_url_json
         );
     }
 
-    #[test]
-    fn test_chekc_server() {
-        let s = aw!(check_server());
+    #[tokio::test]
+    async fn test_chekc_server() {
+        let s = check_server().await;
         println!("{:?}", s);
     }
 
-    #[test]
-    fn test_check() {
+    #[tokio::test]
+    async fn test_check() {
         let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODA0ODgwODQsImlkIjoxLCJuaWNrbmFtZSI6IkRhdmUifQ.avANxkZDZQmi8YhWUyIerPixPAgiYI4YvzP7njDOfkA";
-        let res = aw!(check(token.into())).unwrap();
+        let res = check(token.into()).await.unwrap();
         println!("{:?}", serde_json::to_string(&res).unwrap());
     }
 
-    #[test]
-    fn test_login() {
+    #[tokio::test]
+    async fn test_login() {
         let req_data = LoginReq {
             username: "Dave".into(),
             password: "password".into(),
         };
-        let res = aw!(login(req_data, "nickname".into())).unwrap();
+        let res = login(req_data, "nickname".into()).await.unwrap();
         println!("{:?}", serde_json::to_string(&res).unwrap());
     }
 
-    #[test]
-    fn test_register() {
+    #[tokio::test]
+    async fn test_register() {
         let req_data = RegisterReq {
             nickname: "Dave2".into(),
             password: "password".into(),
             email: "Dave2@emai.com".into(),
         };
-        let res = aw!(register(req_data)).unwrap();
+        let res = register(req_data).await.unwrap();
         println!("{:?}", serde_json::to_string(&res).unwrap());
     }
 
-    #[test]
-    fn test_get_playlist_detail() {
+    #[tokio::test]
+    async fn test_get_playlist_detail() {
         let id: u64 = 19723756;
-        let res = aw!(get_playlist_detail(id));
+        let res = get_playlist_detail(id).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_get_hot_music_list() {
+    #[tokio::test]
+    async fn test_get_hot_music_list() {
         let id: u64 = 19723756;
         let limit: u64 = 10;
         let offset: u64 = 0;
-        let res = aw!(get_playlist_all_music(id, limit, offset));
+        let res = get_playlist_all_music(id, limit, offset).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_search_type_song() {
+    #[tokio::test]
+    async fn test_search_type_song() {
         let tp: u64 = 1;
         let keyword = "周杰伦".into();
         let limit: u64 = 10;
         let offset: u64 = 0;
-        let res = aw!(search(tp, keyword, limit, offset));
+        let res = search(tp, keyword, limit, offset).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_search_type_album() {
+    #[tokio::test]
+    async fn test_search_type_album() {
         let tp: u64 = 10;
         let keyword = "周杰伦".into();
         let limit: u64 = 10;
         let offset: u64 = 0;
-        let res = aw!(search(tp, keyword, limit, offset));
+        let res = search(tp, keyword, limit, offset).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_search_type_artist() {
+    #[tokio::test]
+    async fn test_search_type_artist() {
         let tp: u64 = 100;
         let keyword = "周杰伦".into();
         let limit: u64 = 10;
         let offset: u64 = 0;
-        let res = aw!(search(tp, keyword, limit, offset)).unwrap();
+        let res = search(tp, keyword, limit, offset).await.unwrap();
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_search_type_playlist() {
+    #[tokio::test]
+    async fn test_search_type_playlist() {
         let tp: u64 = 1000;
         let keyword = "周杰伦".into();
         let limit: u64 = 10;
         let offset: u64 = 0;
-        let res = aw!(search(tp, keyword, limit, offset));
+        let res = search(tp, keyword, limit, offset).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_get_album_detail() {
+    #[tokio::test]
+    async fn test_get_album_detail() {
         let id: u64 = 32311;
-        let res = aw!(get_album_detail(id));
+        let res = get_album_detail(id).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_get_artist_common_detail() {
+    #[tokio::test]
+    async fn test_get_artist_common_detail() {
         let id: u64 = 12138269;
-        let res = aw!(get_artist_common_detail(id));
+        let res = get_artist_common_detail(id).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_get_artist_all_songs() {
-        let id: u64 = 12138269;
-        let limit: u64 = 10;
-        let offset: u64 = 0;
-        let res = aw!(get_artist_all_songs(id, limit, offset));
-        println!("{:?}", res);
-    }
-
-    #[test]
-    fn test_get_artist_all_albums() {
+    #[tokio::test]
+    async fn test_get_artist_all_songs() {
         let id: u64 = 12138269;
         let limit: u64 = 10;
         let offset: u64 = 0;
-        let res = aw!(get_artist_all_albums(id, limit, offset));
+        let res = get_artist_all_songs(id, limit, offset).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_get_all_playlist_header() {
+    #[tokio::test]
+    async fn test_get_artist_all_albums() {
+        let id: u64 = 12138269;
+        let limit: u64 = 10;
+        let offset: u64 = 0;
+        let res = get_artist_all_albums(id, limit, offset).await;
+        println!("{:?}", res);
+    }
+
+    #[tokio::test]
+    async fn test_get_all_playlist_header() {
         let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI4Mzc4OTQsImlkIjoyLCJuaWNrbmFtZSI6Ikpob24ifQ.4Y2vNcpptiWnH5XqNodAlizzmq06D0Mxcx71r2pSg3Q";
-        let res = aw!(get_all_playlist_header(token.into()));
+        let res = get_all_playlist_header(token.into()).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_create_playlist() {
+    #[tokio::test]
+    async fn test_create_playlist() {
         let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI4Mzc4OTQsImlkIjoyLCJuaWNrbmFtZSI6Ikpob24ifQ.4Y2vNcpptiWnH5XqNodAlizzmq06D0Mxcx71r2pSg3Q";
         let name = "test-playlist";
-        let res = aw!(create_playlist(token.into(), name.into()));
+        let res = create_playlist(token.into(), name.into()).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_delete_playlist() {
+    #[tokio::test]
+    async fn test_delete_playlist() {
         let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI4Mzc4OTQsImlkIjoyLCJuaWNrbmFtZSI6Ikpob24ifQ.4Y2vNcpptiWnH5XqNodAlizzmq06D0Mxcx71r2pSg3Q";
         let id = 16;
-        let res = aw!(delete_playlist(token.into(), id));
+        let res = delete_playlist(token.into(), id).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_add_song_to_playlist() {
+    #[tokio::test]
+    async fn test_add_song_to_playlist() {
         let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI4Mzc4OTQsImlkIjoyLCJuaWNrbmFtZSI6Ikpob24ifQ.4Y2vNcpptiWnH5XqNodAlizzmq06D0Mxcx71r2pSg3Q";
         let pid = 14;
         let sid = 347230;
-        let res = aw!(update_song_to_playlist(token.into(), pid, sid, "add".into()));
+        let res = update_song_to_playlist(token.into(), pid, sid, "add".into()).await;
         println!("{:?}", res);
     }
 
-    #[test]
-    fn test_get_allsong_playlist() {
+    #[tokio::test]
+    async fn test_get_allsong_playlist() {
         let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI4Mzc4OTQsImlkIjoyLCJuaWNrbmFtZSI6Ikpob24ifQ.4Y2vNcpptiWnH5XqNodAlizzmq06D0Mxcx71r2pSg3Q";
         let id = 14;
-        let res = aw!(get_allsong_playlist(token.into(), id));
+        let res = get_allsong_playlist(token.into(), id).await;
         println!("{:?}", res);
     }
 }
