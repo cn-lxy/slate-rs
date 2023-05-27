@@ -70,7 +70,7 @@ fn main() {
             get_all_playlist_header,
             create_playlist,
             delete_playlist,
-            add_song_to_playlist,
+            update_song_to_playlist,
             get_allsong_playlist,
         ])
         .run(tauri::generate_context!())

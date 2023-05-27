@@ -39,7 +39,7 @@ pub async fn check_server() -> Result<ServiceState, String> {
 #[tauri::command]
 pub async fn get_music_detail(id: u64) -> MusicJSON {
     let url = format!("{}/song/detail?ids={}", NETEASE_SERVER, id);
-    
+
     reqwest::get(url)
         .await
         .unwrap()
@@ -52,7 +52,7 @@ pub async fn get_music_detail(id: u64) -> MusicJSON {
 pub async fn get_music_url(id: u64) -> MusicUrlJson {
     let level = "standard"; // 默认音乐质量等级为标准
     let url = format!("{}/song/url/v1?id={}&level={}", NETEASE_SERVER, id, level);
-    
+
     reqwest::get(url)
         .await
         .unwrap()
@@ -205,9 +205,7 @@ pub async fn search(
             let res = serde_json::from_str::<SearchResPlaylist>(&body).unwrap();
             Ok(SearchResType::Playlist(res))
         }
-        _ => {
-            Err("unknown type".into())
-        }
+        _ => Err("unknown type".into()),
     }
 }
 
@@ -351,8 +349,18 @@ pub async fn delete_playlist(token: String, id: u64) -> Result<UpdatePlaylistJSO
 }
 
 #[tauri::command]
-pub async fn add_song_to_playlist(token: String, pid: u64, sid: u64) -> Result<UpdatePlaylistJSON, String> {
-    let url = format!("{}/playlist/{}", API_SERVER, pid);
+pub async fn update_song_to_playlist(
+    token: String,
+    pid: u64,
+    sid: u64,
+    tp: String,
+) -> Result<UpdatePlaylistJSON, String> {
+    let tp = match &tp as &str {
+        "add" => "add",
+        "del" => "del",
+        _ => return Err("Type Error".to_string()),
+    };
+    let url = format!("{}/playlist/{}?type={}", API_SERVER, pid, tp);
     let mut headers = header::HeaderMap::new();
     let mut auth_value = header::HeaderValue::from_bytes(token.as_bytes()).unwrap();
     auth_value.set_sensitive(true);
@@ -364,7 +372,7 @@ pub async fn add_song_to_playlist(token: String, pid: u64, sid: u64) -> Result<U
         .unwrap();
     let res = client
         .put(url)
-        .json(&json!({"songId": sid}))
+        .json(&json!({ "songId": sid }))
         .send()
         .await
         .unwrap()
@@ -390,14 +398,7 @@ pub async fn get_allsong_playlist(token: String, id: u64) -> Result<AllSongsJSON
         .default_headers(headers)
         .build()
         .unwrap();
-    let res = client
-        .get(url)
-        .send()
-        .await
-        .unwrap()
-        .text()
-        .await
-        .unwrap();
+    let res = client.get(url).send().await.unwrap().text().await.unwrap();
     match serde_json::from_str::<AllSongsJSON>(&res) {
         Ok(r) => Ok(r),
         Err(e) => Err(e.to_string()),
@@ -580,7 +581,7 @@ mod tests {
         let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI4Mzc4OTQsImlkIjoyLCJuaWNrbmFtZSI6Ikpob24ifQ.4Y2vNcpptiWnH5XqNodAlizzmq06D0Mxcx71r2pSg3Q";
         let pid = 14;
         let sid = 347230;
-        let res = aw!(add_song_to_playlist(token.into(), pid, sid));
+        let res = aw!(update_song_to_playlist(token.into(), pid, sid, "add".into()));
         println!("{:?}", res);
     }
 
