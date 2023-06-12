@@ -3,18 +3,18 @@ use tauri::AppHandle;
 use tauri::Manager;
 
 pub fn menu() -> SystemTray {
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
+    let quit = CustomMenuItem::new("quit".to_string(), "退出");
+    let hide = CustomMenuItem::new("hide".to_string(), "隐藏");
     let previous = CustomMenuItem::new("previous", "上一首");
     let next = CustomMenuItem::new("next", "下一首");
     let tray_menu = SystemTrayMenu::new()
-        .add_item(quit)
+        .add_item(previous)
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(next)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(hide)
         .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(previous)
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(next);
+        .add_item(quit);
     
     SystemTray::new().with_menu(tray_menu)
 }

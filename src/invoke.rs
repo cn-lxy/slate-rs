@@ -18,8 +18,11 @@ use crate::models::search::{
 use crate::models::service::ServiceState;
 use crate::*;
 
-const NETEASE_SERVER: &str = "http://localhost:3000";
-const API_SERVER: &str = "http://localhost:8000";
+// const NETEASE_SERVER: &str = "http://localhost:3000";
+// const API_SERVER: &str = "http://localhost:8000";
+
+const NETEASE_SERVER: &str = "http://www.longxinyu.site:3000";
+const API_SERVER: &str = "http://www.longxinyu.site:8000";
 
 #[tauri::command]
 pub async fn check_server() -> Result<ServiceState, String> {
