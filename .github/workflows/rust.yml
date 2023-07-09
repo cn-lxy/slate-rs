@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: dep
+    - name: Install gdk
       run: sudo apt install gdk-3.0
     - name: Build
       run: cargo build --verbose
